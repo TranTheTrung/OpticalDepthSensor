@@ -1,0 +1,193 @@
+(************** Content-type: application/mathematica **************
+                     CreatedBy='Mathematica 5.1'
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[      4809,        137]*)
+(*NotebookOutlinePosition[      5452,        159]*)
+(*  CellTagsIndexPosition[      5408,        155]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[
+    \(\(path = "\<E:\Trung\\\>";\)\)], "Input"],
+
+Cell[BoxData[
+    RowBox[{\(General::"spell1"\), \(\(:\)\(\ \)\), "\<\"Possible spelling \
+error: new symbol name \\\"\\!\\(path\\)\\\" is similar to existing symbol \\\
+\"\\!\\(Path\\)\\\". \\!\\(\\*ButtonBox[\\\"More\[Ellipsis]\\\", \
+ButtonStyle->\\\"RefGuideLinkText\\\", ButtonFrame->None, \
+ButtonData:>\\\"General::spell1\\\"]\\)\"\>"}]], "Message"]
+}, Open  ]],
+
+Cell[BoxData[
+    \(\(pl = {path <> "\<Y2005M11\ODS\\2004-11\>", 
+          path <> "\<Y2005M11\ODS\\2004-11\>", 
+          path <> "\<Y2005M11\ODS\\2004-12\>", 
+          path <> "\<Y2005M11\ODS\\2005-01\>", 
+          path <> "\<Y2005M11\ODS\\2005-02\>", 
+          path <> "\<Y2005M11\ODS\\2005-03\>", 
+          path <> "\<Y2005M11\ODS\\2005-04\>", 
+          path <> "\<Y2005M11\ODS\\2005-05\>", 
+          path <> "\<Y2005M11\ODS\\2005-06\>", 
+          path <> "\<Y2005M11\ODS\\2005-07\>", 
+          path <> "\<Y2005M11\ODS\\2005-08\>", 
+          path <> "\<Y2005M11\ODS\\2005-09\>", 
+          path <> "\<Y2005M11\ODS\\2005-10\>"};\)\)], "Input"],
+
+Cell[CellGroupData[{
+
+Cell["Unzip data", "Section"],
+
+Cell[BoxData[
+    \(\(UnzipData[p_] := 
+        Module[{}, \[IndentingNewLine]SetDirectory[
+            p]; \[IndentingNewLine]Run["\<gunzip \
+*.gz\>"];\[IndentingNewLine]];\)\)], "Input"],
+
+Cell[BoxData[
+    \(\(Map[UnzipData, pl];\)\)], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Gz - Gz/HDF", "Section"],
+
+Cell[BoxData[
+    \( (*\[IndentingNewLine]JD[ye_, mo_, da_, ho_, mi_, se_] := 
+        Module[{a = Floor[\((14 - mo)\)/12], y, m, 
+            jdn}, \[IndentingNewLine]y = 
+            ye + 4800 - a; \[IndentingNewLine]m = 
+            mo + 12  a - 3; \[IndentingNewLine]jdn = 
+            da + Floor[\((153  m + 2)\)/5] + 365  y + Floor[y/4] - 
+              Floor[y/100] + Floor[y/400] - 32045; \[IndentingNewLine]Print[
+            jdn]; \[IndentingNewLine]jdn + \((ho - 12)\)/24 + mi/1440 + 
+            se/86400. \[IndentingNewLine]]\[IndentingNewLine]*) \)], "Input"],
+
+Cell[BoxData[
+    \(<< Miscellaneous`Calendar`\)], "Input"],
+
+Cell[BoxData[
+    \(JD[ye_, mo_, da_, ho_, mi_, se_] := 
+      DaysBetween[{2000, 1, 1}, {ye, mo, da}] + ho/24 + mi/1440 + 
+        se/86400\  + \ 2451544 + 1/2\)], "Input"],
+
+Cell[BoxData[
+    \(GetData[p_] := 
+      Module[{f}, \[IndentingNewLine]SetDirectory[p]; \[IndentingNewLine]f = 
+          FileNames["\<*.txt\>"]; \[IndentingNewLine]f = 
+          Join @@ Map[Import[#, "\<Table\>"], f]; \[IndentingNewLine]f = 
+          f/1000; \[IndentingNewLine]Map[{JD[#[\([1]\)], #[\([2]\)], \
+#[\([3]\)], #[\([4]\)], #[\([5]\)], #[\([6]\)]], #[\([7]\)], #[\([8]\)], \
+#[\([9]\)]} &, f]\[IndentingNewLine]]\)], "Input"],
+
+Cell[BoxData[
+    \(\(data = Join @@ Map[GetData, pl];\)\)], "Input"],
+
+Cell[BoxData[
+    \(\(Export[path <> "\<Y2005M11\ODS\\PR1EM2-2004-2005.dat\>", 
+        data];\)\)], "Input"],
+
+Cell[BoxData[
+    \(\(Export[path <> "\<Y2005M11\ODS\\PR1EM2-2004-2005.hdf\>", 
+        data];\)\)], "Input"]
+}, Closed]]
+},
+FrontEndVersion->"5.1 for Microsoft Windows",
+ScreenRectangle->{{0, 1024}, {0, 678}},
+WindowSize->{978, 645},
+WindowMargins->{{0, Automatic}, {Automatic, 0}}
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1776, 53, 61, 1, 30, "Input"],
+Cell[1840, 56, 356, 5, 22, "Message"]
+}, Open  ]],
+Cell[2211, 64, 656, 13, 110, "Input"],
+
+Cell[CellGroupData[{
+Cell[2892, 81, 29, 0, 73, "Section"],
+Cell[2924, 83, 188, 4, 90, "Input"],
+Cell[3115, 89, 56, 1, 30, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[3208, 95, 30, 0, 43, "Section"],
+Cell[3241, 97, 573, 9, 190, "Input"],
+Cell[3817, 108, 59, 1, 30, "Input"],
+Cell[3879, 111, 173, 3, 30, "Input"],
+Cell[4055, 116, 442, 7, 150, "Input"],
+Cell[4500, 125, 69, 1, 30, "Input"],
+Cell[4572, 128, 109, 2, 30, "Input"],
+Cell[4684, 132, 109, 2, 30, "Input"]
+}, Closed]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+

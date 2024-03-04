@@ -1,0 +1,357 @@
+(************** Content-type: application/mathematica **************
+                     CreatedBy='Mathematica 5.1'
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[      9330,        262]*)
+(*NotebookOutlinePosition[      9973,        284]*)
+(*  CellTagsIndexPosition[      9929,        280]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["OE spherical", "Title"],
+
+Cell[CellGroupData[{
+
+Cell["Code", "Section"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[StyleBox["Dust",
+  FontColor->RGBColor[0.423529, 0.745098, 0.254902]]], "Subsection"],
+
+Cell[BoxData[
+    \(HG[g_, 
+        mu_] := \(1 - g\^2\)\/\((1 + g\^2 - 2\ g\ mu)\)\^\(3/2\)\)], "Input"],
+
+Cell[BoxData[
+    \(DHG[f1_, g1_, f2_, g2_, g3_, mu_] := 
+      f1\ HG[g1, mu] + 
+        f2\ HG[g2, mu] + \((1 - f1 - f2)\) HG[g3, mu]\)], "Input"],
+
+Cell[BoxData[
+    \(\(DustModel[lam_, taud_] := 
+        Module[{zl = {0, 3000, 6000}, pr = {1, 1, 0, 0}, pf, om, bs, ba, 
+            no = 4500, mu}, \[IndentingNewLine]pf = 
+            If[lam < 500, \[IndentingNewLine]DHG[0.79, 0.74, 0.2, 
+                0.96, \(-0.55\), 
+                mu]\[IndentingNewLine], \[IndentingNewLine]DHG[0.78, 0.73, 
+                0.2, 0.935, \(-0.5\), 
+                mu]\[IndentingNewLine]]; \[IndentingNewLine]om = 
+            If[lam < 500, 0.89, 0.99]; \[IndentingNewLine]bs = 
+            om\ taud/no; \[IndentingNewLine]ba = \((1 - om)\) 
+              taud/no; \[IndentingNewLine]pf = 
+            Map[\((pf /. mu \[Rule] #)\) &, 
+              Cos[Range[0, 180] Degree]]; \[IndentingNewLine]{zl, bs\ , ba, 
+            pf}\[IndentingNewLine]];\)\)], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[StyleBox["Clear earth",
+  FontColor->RGBColor[0.423529, 0.745098, 0.254902]]], "Subsection"],
+
+Cell[BoxData[
+    \(\(MC2RTPb[m_String] := 
+        Module[{s = OpenRead[m], R, albedo, nl, l}, \[IndentingNewLine]Skip[
+            s, String, 2]; \[IndentingNewLine]R = 
+            Read[s, Number]; \[IndentingNewLine]Print["\<Radius of planet: \
+\>", R]; \[IndentingNewLine]Skip[s, String, 2]; \[IndentingNewLine]albedo = 
+            Read[s, Number]; \[IndentingNewLine]Print["\<Albedo of planet: \
+\>", albedo]; \[IndentingNewLine]Skip[s, String, 2]; \[IndentingNewLine]nl = 
+            Read[s, Number]; \[IndentingNewLine]Print["\<Number of layers: \
+\>", nl]; \[IndentingNewLine]Skip[s, String, 2]; \[IndentingNewLine]l = 
+            ReadList[s, Number]; \[IndentingNewLine]Close[
+            s]; \[IndentingNewLine]l = 
+            Partition[l, 184]; \[IndentingNewLine]l = 
+            Transpose[l]; \[IndentingNewLine]{R + l[\([1]\)], l[\([2]\)], 
+            l[\([3]\)], Transpose[l[\([Range[4, 184]]\)]], 
+            albedo}\[IndentingNewLine]];\)\)], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[StyleBox["Combine",
+  FontColor->RGBColor[0.423529, 0.745098, 0.254902]]], "Subsection"],
+
+Cell[BoxData[
+    \(<< Graphics`Useful`\)], "Input"],
+
+Cell[BoxData[
+    \(BuildAtmosphere[atm_, taud_, mu_, lam_] := 
+      Module[{zl, bs, ba, pf, ozl, obs, oba, opf, cloud, cbs, 
+          dbs}, \[IndentingNewLine]\[IndentingNewLine]zl = 
+          atm[\([1]\)] - atm[\([1, 1]\)]; \[IndentingNewLine]bs = 
+          ListInterpolation[atm[\([2]\)], {zl}, 
+            InterpolationOrder \[Rule] 1]; \[IndentingNewLine]ba = 
+          ListInterpolation[atm[\([3]\)], {zl}, 
+            InterpolationOrder \[Rule] 1]; \[IndentingNewLine]pf = 
+          Map[ListInterpolation[#, {zl}, InterpolationOrder \[Rule] 1] &, 
+            Transpose[
+              atm[\([4]\)]]]; \[IndentingNewLine]Print["\<clear optical depth \
+\>", Total[\((Rest[atm[\([1]\)]] - 
+                  Most[atm[\([1]\)]])\) \((Rest[atm[\([2]\)]] + 
+                    Most[atm[\([2]\)]] + Rest[atm[\([3]\)]] + 
+                    Most[atm[\([3]\)]])\)/
+                2]]; \[IndentingNewLine]\[IndentingNewLine]cloud = 
+          DustModel[lam, taud]; \[IndentingNewLine]ozl = 
+          Union[Chop[zl], 
+            Chop[cloud[\([1]\)]], {4000}]; \[IndentingNewLine]\
+\[IndentingNewLine]cbs = Map[bs, ozl]; \[IndentingNewLine]dbs = 
+          Map[If[# < 3000, cloud[\([2]\)], 
+                If[# > 6000, 0, cloud[\([2]\)] \((6000 - #)\)/3000]] &, 
+            ozl]; \[IndentingNewLine]obs = 
+          cbs + dbs; \[IndentingNewLine]\[IndentingNewLine]oba = 
+          Map[\((ba[#] + 
+                  If[# < 3000, cloud[\([3]\)], 
+                    If[# > 6000, 0, 
+                      cloud[\([3]\)] \((6000 - #)\)/3000]])\) &, 
+            ozl]; \[IndentingNewLine]\[IndentingNewLine]opf = \((cbs\ Map[
+                    Through[pf[#]] &, ozl] + 
+                Outer[Times, dbs, cloud[\([\(-1\)]\)]])\)/
+            obs\ ; \[IndentingNewLine]opf = 
+          Map[ListInterpolation[#, {Cos[Range[0, 180] Degree]}, 
+                InterpolationOrder \[Rule] 1] &, 
+            opf]; \[IndentingNewLine]\[IndentingNewLine]Print["\<optical \
+depth \>", 
+          Total[\((Rest[ozl] - 
+                  Most[ozl])\) \((Rest[obs] + Most[obs] + Rest[oba] + 
+                    Most[oba])\)/
+                2]]; \[IndentingNewLine]Print["\<number of layer \>", 
+          Length[obs]]; \[IndentingNewLine]{ozl + atm[\([1, 1]\)], obs, 
+          oba, {Through[opf[mu]], mu}, atm[\([\(-1\)]\)]}]\)], "Input"]
+}, Closed]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[StyleBox["Run",
+  FontColor->RGBColor[0.423529, 0.745098, 0.254902]]], "Section"],
+
+Cell[BoxData[
+    \(\(gp = "\<E:\Trung\\\>";\)\)], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\(atm1 = MC2RTPb[gp <> "\<Y2004M12\CE\\CE370.txt\>"];\)\)], "Input"],
+
+Cell[BoxData[
+    InterpretationBox[\("Radius of planet: "\[InvisibleSpace]6.378`*^6\),
+      SequenceForm[ "Radius of planet: ", .6378*^7],
+      Editable->False]], "Print"],
+
+Cell[BoxData[
+    InterpretationBox[\("Albedo of planet: "\[InvisibleSpace]0.35`\),
+      SequenceForm[ "Albedo of planet: ", .34999999999999998],
+      Editable->False]], "Print"],
+
+Cell[BoxData[
+    InterpretationBox[\("Number of layers: "\[InvisibleSpace]16\),
+      SequenceForm[ "Number of layers: ", 16],
+      Editable->False]], "Print"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\(atm2 = BuildAtmosphere[atm1, 0.5, mu, 370];\)\)], "Input"],
+
+Cell[BoxData[
+    InterpretationBox[\("clear optical depth \
+"\[InvisibleSpace]0.5033225202658024`\),
+      SequenceForm[ "clear optical depth ", .50332252026580238],
+      Editable->False]], "Print"],
+
+Cell[BoxData[
+    InterpretationBox[\("optical depth "\[InvisibleSpace]1.003322520265802`\),
+      
+      SequenceForm[ "optical depth ", 1.003322520265802],
+      Editable->False]], "Print"],
+
+Cell[BoxData[
+    InterpretationBox[\("number of layer "\[InvisibleSpace]19\),
+      SequenceForm[ "number of layer ", 19],
+      Editable->False]], "Print"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Export[gp <> "\<Y2005M11\CI\\DEt0.5l370.mx\>", atm2]\)], "Input"],
+
+Cell[BoxData[
+    \("E:\\Trung\\Y2005M11\\CI\\DEt0.5l370.mx"\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\(atm2 = BuildAtmosphere[atm1, 0.5, mu, 870];\)\)], "Input"],
+
+Cell[BoxData[
+    InterpretationBox[\("clear optical depth \
+"\[InvisibleSpace]0.5033225202658024`\),
+      SequenceForm[ "clear optical depth ", .50332252026580238],
+      Editable->False]], "Print"],
+
+Cell[BoxData[
+    InterpretationBox[\("optical depth "\[InvisibleSpace]1.003322520265802`\),
+      
+      SequenceForm[ "optical depth ", 1.003322520265802],
+      Editable->False]], "Print"],
+
+Cell[BoxData[
+    InterpretationBox[\("number of layer "\[InvisibleSpace]19\),
+      SequenceForm[ "number of layer ", 19],
+      Editable->False]], "Print"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Export[gp <> "\<Y2005M11\CI\\DEt0.5l870.mx\>", atm2]\)], "Input"],
+
+Cell[BoxData[
+    \("E:\\Trung\\Y2005M11\\CI\\DEt0.5l870.mx"\)], "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+FrontEndVersion->"5.1 for Microsoft Windows",
+ScreenRectangle->{{0, 1280}, {0, 945}},
+WindowSize->{988, 740},
+WindowMargins->{{0, Automatic}, {Automatic, 0}}
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1776, 53, 29, 0, 95, "Title"],
+
+Cell[CellGroupData[{
+Cell[1830, 57, 23, 0, 73, "Section"],
+
+Cell[CellGroupData[{
+Cell[1878, 61, 99, 1, 38, "Subsection"],
+Cell[1980, 64, 105, 2, 48, "Input"],
+Cell[2088, 68, 148, 3, 30, "Input"],
+Cell[2239, 73, 806, 14, 250, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[3082, 92, 106, 1, 30, "Subsection"],
+Cell[3191, 95, 975, 15, 350, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[4203, 115, 102, 1, 30, "Subsection"],
+Cell[4308, 118, 52, 1, 30, "Input"],
+Cell[4363, 121, 2338, 42, 490, "Input"]
+}, Closed]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[6750, 169, 95, 1, 73, "Section"],
+Cell[6848, 172, 59, 1, 30, "Input"],
+
+Cell[CellGroupData[{
+Cell[6932, 177, 88, 1, 30, "Input"],
+Cell[7023, 180, 174, 3, 25, "Print"],
+Cell[7200, 185, 180, 3, 25, "Print"],
+Cell[7383, 190, 161, 3, 25, "Print"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[7581, 198, 80, 1, 30, "Input"],
+Cell[7664, 201, 200, 4, 25, "Print"],
+Cell[7867, 207, 191, 4, 25, "Print"],
+Cell[8061, 213, 157, 3, 25, "Print"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[8255, 221, 85, 1, 30, "Input"],
+Cell[8343, 224, 74, 1, 29, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[8454, 230, 80, 1, 30, "Input"],
+Cell[8537, 233, 200, 4, 25, "Print"],
+Cell[8740, 239, 191, 4, 25, "Print"],
+Cell[8934, 245, 157, 3, 25, "Print"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[9128, 253, 85, 1, 30, "Input"],
+Cell[9216, 256, 74, 1, 29, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+
